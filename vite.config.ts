@@ -1,29 +1,21 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig, loadEnv} from 'vite';
+import { defineConfig } from 'vite';
 
-export default defineConfig(({mode}) => {
-  // Ensure the environment is loaded from the root directory
-  const env = loadEnv(mode, process.cwd(), '');
-  
-  return {
-    // Explicitly set base to relative to ensure assets load correctly in subdirectories
-    base: './', 
-    plugins: [react(), tailwindcss()],
-    define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+export default defineConfig({
+  // Relative base ensures assets load correctly on GitHub Pages
+  base: './', 
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
     },
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
-    },
-    server: {
-      // HMR configuration for stable editing in AI Studio environments
-      hmr: process.env.DISABLE_HMR !== 'true',
-      port: 3000,
-      host: '0.0.0.0',
-    },
-  };
+  },
+  server: {
+    // Keeps the dev environment stable
+    hmr: true,
+    port: 3000,
+    host: '0.0.0.0',
+  },
 });
